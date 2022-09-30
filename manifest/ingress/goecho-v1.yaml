@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goecho-deployment
+  labels:
+    depl: goecho
+spec:
+  selector:
+    matchLabels:
+      app: goecho
+  template:
+    metadata:
+      labels:
+        app: goecho
+    spec:
+      containers:
+        - name: container-goecho
+          image: hargeon/goecho
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goecho-service
+  labels:
+    srv: goecho
+spec:
+  selector:
+    app: goecho
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: goecho-ingress
+spec:
+  rules:
+    - host: goecho.info
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: goecho-service
+                port:
+                  number: 3000
