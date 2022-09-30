@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goecho-deployment
+  labels:
+    app: goecho-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: goecho-label
+  template:
+    metadata:
+      labels:
+        project: goecho-label
+    spec:
+      containers:
+        - name: container-goecho
+          image: hargeon/goecho
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: goecho-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: goecho-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
