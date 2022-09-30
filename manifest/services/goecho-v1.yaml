@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goecho-deployment
+  labels:
+    app: goecho-deployment-label
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: goecho
+  template:
+    metadata:
+      labels:
+        app: goecho
+    spec:
+      containers:
+        - name: container-goecho
+          image: hargeon/goecho
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goecho-service
+  labels:
+    app: goecho-service
+spec:
+  selector:
+    app: goecho
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: NodePort
