@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goecho
+  labels:
+    env: prod
+    app: main
+    tier: frontend
+spec:
+  containers:
+    - name: container-goecho
+      image: hargeon/goecho
+      ports:
+        - containerPort: 3000
